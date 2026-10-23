@@ -1,96 +1,67 @@
-# Burp Suite 中文界面插件（burp-suite-zh-cn-plugin）
+# Burp Suite 简体中文插件（burp-suite-zh-cn-plugin）
 
-一个 **Montoya API 扩展**，把 Burp Suite 界面上的英文替换成中文。
+一个基于 **Montoya API** 的 Burp Suite 扩展，把界面上的英文翻译成简体中文。
 
-- 当前版本：`1.8.0`
-- 直接下载：[Releases](https://github.com/rmrfnoise/burp-suite-zh-cn-plugin/releases/latest)
-- 编译目标：Java 17，基于 Montoya API 2024.7
-- 内置词库：2400 条词条 + 45 条正则规则，运行时编辑并热重载
+- 下载：[Releases](https://github.com/rmrfnoise/burp-suite-zh-cn-plugin/releases/latest)
 - 许可证：[MIT](LICENSE)
+- 构建基线：Montoya API 2024.7 / Java 17
 
-> 这是个人维护的非官方项目，与 PortSwigger Ltd. 没有隶属或背书关系。
-> "Burp" / "Burp Suite" 是 PortSwigger Ltd. 的商标；使用本扩展仍受你的 Burp Suite 许可协议约束。
+> 非官方项目，与 PortSwigger Ltd. 没有隶属或背书关系。  
+> “Burp” / “Burp Suite” 是 PortSwigger Ltd. 的商标；使用本扩展仍受 Burp 许可协议约束。
 
----
-
-## 一、直接使用
+## 安装与使用
 
 1. 从 [Releases](https://github.com/rmrfnoise/burp-suite-zh-cn-plugin/releases/latest) 下载最新 jar。
-2. Burp → **Extensions** → **Installed** → **Add**。
-3. `Extension type` 选 **Java**，`Extension file` 选这个 jar，点 **Next**。
-4. 在 **Output** 里应看到：
+2. 打开 Burp → **Extensions** → **Installed** → **Add**。
+3. `Extension type` 选 **Java**，`Extension file` 选下载的 jar，点 **Next**。
+4. 在 **Output** 中确认加载成功：
 
 ```text
-[burp-suite-zh-cn-plugin] build 1.8.0+20261023-2042
+[burp-suite-zh-cn-plugin] build <版本>+<构建时间>
 [burp-suite-zh-cn-plugin] AWT listeners on bus: 1 (1 = clean)
-[burp-suite-zh-cn-plugin] dictionary: 2400 entries / 45 rules <- C:\Users\<你>\.burp-i18n\dict.json
+[burp-suite-zh-cn-plugin] dictionary: <词条数> entries / <规则数> rules <- C:\Users\<你>\.burp-i18n\dict.json
 ```
 
-`AWT listeners on bus` 正常是 **1**。大于 1 说明进程里叠了旧实例，完整退出 Burp 再启动。
+`AWT listeners on bus` 是扩展注册的监听器数量，正常为 **1**。大于 1 通常说明旧实例没有退干净，完整退出 Burp 再启动即可。
 
-卸载：**Extensions → Installed** → 选中扩展 → **Remove**。
-插件会停掉定时器、摘掉 AWT 钩子和组件监听、还原表格渲染器。
-已经写进组件的中文会随 Burp 重绘/重启恢复，字体覆盖也在重启后恢复。
+卸载：**Extensions** → **Installed** → 选中扩展 → **Remove**。已经替换的界面文本会随 Burp 重绘或重启恢复。
 
----
+## 自己构建（可选）
 
-## 二、自己构建（可选）
-
-只有改 Java 代码或内置词库时才需要；普通用户直接用上面的 jar。
-
-需要 JDK 17+，在项目根目录运行：
+只有修改 Java 源码或内置词库时才需要。构建需要 **JDK 17+**，在项目根目录运行：
 
 ```powershell
+# 重新打当前版本，自己使用
 .\build.ps1
+
+# 发布新版本时指定版本号（示例占位，实际填你的版本）
+.\build.ps1 -Version <新版本号>
 ```
 
-发新版本时指定版本号：
+产物输出到 `dist/`。`-Version` 只影响 manifest 和 jar 文件名，不会自动修改 README 或词库的 `config.version`。
 
-```powershell
-.\build.ps1 -Version 1.8.1
-```
+如果 jar 正在被 Burp 加载，先 Remove 扩展或关闭 Burp，否则 Windows 会锁住文件。
 
-`-Clean` 会先清空 `build/`。首次构建会自动下载并校验 Montoya API，产物输出到 `dist/`。
-如果 jar 被 Burp 占用，先在 Burp 里 Remove 扩展或关闭 Burp。
+## 词库
 
-Linux/macOS 需要 PowerShell 7（`pwsh`）运行同一个脚本。
-
----
-
-## 三、词库
-
-首次加载时，jar 内置的 `dict.json` 会复制到：
+首次运行时，插件会把 jar 内置的词库复制到：
 
 ```text
 C:\Users\<用户名>\.burp-i18n\dict.json
 ```
 
-之后所有翻译都读这个文件。改完保存，插件在 **8 秒内**自动重载并重扫界面。
+之后修改这个文件并保存，插件会在 **8 秒内**自动重载。
 
 ### 结构
 
 ```json
 {
-  "config": {
-    "version": 24,
-    "translateHtml": true,
-    "logMissing": true,
-    "deepScan": true,
-    "translateCells": true,
-    "applyFont": false,
-    "fontFamily": "",
-    "resweepSeconds": 300
-  },
-  "ignore": ["Burp", "Repeater", "HTTP"],
-  "groups": {
-    "通用": { "OK": "确定", "Cancel": "取消" }
-  },
+  "config": { "logMissing": true, "resweepSeconds": 300 },
+  "ignore": ["Burp", "HTTP"],
+  "groups": { "通用": { "OK": "确定", "Cancel": "取消" } },
   "map": { "Drop": "丢弃" },
-  "scopes": {
-    "SomeBurpPanel": { "Scope": "作用域" }
-  },
   "patterns": [
-    { "regex": "^Memory: ([\\d.]+)MB of ([\\d.]+)GB$", "replacement": "内存：$1MB / $2GB" }
+    { "regex": "^Length: (\\d+)$", "replacement": "长度：$1" }
   ],
   "ignorePatterns": ["^https?://"]
 }
@@ -98,66 +69,69 @@ C:\Users\<用户名>\.burp-i18n\dict.json
 
 | 字段 | 作用 |
 |---|---|
-| `groups` / `map` | `英文: 中文` 映射；重复键后者覆盖前者 |
-| `ignore` | 白名单：这些词永远不翻 |
-| `scopes` | 按祖先组件类名限定译法，用于一词多义 |
-| `patterns` | 正则规则，处理 `Memory: 192.7MB of 3.97GB` 这类动态文本 |
-| `ignorePatterns` | 命中即视为数据（字符集、URL、IPv4、日期、哈希、文件大小），不翻也不记日志 |
+| `map` | 平铺的“英文 → 中文”映射，适合零散补词 |
+| `groups` | 按主题分组的同样映射；和 `map` 等效，同名键以 `map` 为准 |
+| `ignore` | 永不翻译的白名单 |
+| `patterns` | 动态文本的正则替换 |
+| `ignorePatterns` | URL、日期、哈希等数据，不翻译也不记日志 |
+| `scopes` | 按组件类名限定译法，默认空 |
+| `config` | `version` 词库版本；`logMissing` 记录漏译；`deepScan` 扫描自绘组件；`translateCells` 翻译表格；`applyFont` 覆盖字体；`resweepSeconds` 兜底扫描周期 |
 
-匹配优先级：`scopes[祖先类名][原文]` → `groups/map[原文]` → 正则 → 保持英文。
-查不到就原样保留，**不做半句替换或猜测翻译**。
+匹配顺序是：`scopes` → `map` / `groups` → `patterns` → 保持英文。查不到就原样保留，**不做半句替换或猜测翻译**。
 
-### 补词条
+### 补词
 
-1. 正常用 Burp，看到没翻译的地方。
-2. 打开 `~/.burp-i18n/missing.txt`，一行一条未命中英文。
-3. 挑需要的复制进 `dict.json` 的 `groups`，填中文，保存。
-4. 8 秒内界面自动更新。
+直接修改 `C:\Users\<用户名>\.burp-i18n\dict.json`：在 `map` 里加 `"英文": "中文"`，也可以放进 `groups` 的某个组，保存后自动热重载。
 
-`config.version` 是词库版本号。插件启动时会比较 jar 内置版本和磁盘版本：
-内置更高时备份旧文件并替换；相同或磁盘更高时不动你的文件。
-想锁住自己的改动，把 `config.version` 改成 `9999`。
+`missing.txt` 是可选的漏译清单：插件会把界面出现、但词库没命中的英文记在这里，方便你找还缺哪些词，或复制准确原文。不想生成就设 `"logMissing": false`。
 
----
-
-## 四、隐私与数据
-
-- 插件**不联网、无遥测、不上报**。
-- 本地数据都在 `~/.burp-i18n/`：词库、`missing.txt`、升级备份。
-- `missing.txt` 是未命中英文，**可能包含主机名、URL、自定义字段等测试现场信息**。
-  分享前请脱敏；不想生成就设置 `"logMissing": false`。
-- 删除本地数据：关闭 Burp 后删除 `~/.burp-i18n/` 整个目录。
-
----
-
-## 五、已知边界
-
-| 不翻译的东西 | 原因 |
+| 你要做什么 | 改哪里 |
 |---|---|
-| 启动向导（选项目 / 选配置 / Starting project） | 出现在扩展加载之前 |
+| 自己补词，马上生效 | `C:\Users\<用户名>\.burp-i18n\dict.json` |
+| 更新发给别人的内置词库 | `src/main/resources/dict.json`，然后重新构建 jar |
+
+### 版本与升级
+
+`config.version` 是**词库版本**，不是插件版本。只有发布新 jar、需要让已有用户换用新内置词库时，才需要调高。
+
+- 只改本地 `~/.burp-i18n/dict.json`：不用动版本号；
+- 发布新 jar：把 `src/main/resources/dict.json` 的 `version` 加 1，已有用户启动时才会备份旧词库并替换；
+- 想锁住自己的词库不被升级：把版本号改成 `9999`。
+
+如果忘了升版本号，已有用户会继续用本地旧词库，新词不生效；新用户不受影响。升了版本号时，插件会先把旧词库备份成 `dict.json.bak-时间`，再替换；旧词库里的自定义词不会自动合并，需要从备份手动搬。
+
+## 隐私
+
+- 插件**不联网，不统计你用了哪些功能，也不上传任何数据**。
+- 本地只写 `~/.burp-i18n/`：词库、`missing.txt`、升级备份。
+- `missing.txt` 可能包含主机名、URL、自定义字段等测试信息，分享前请脱敏；不想生成就设 `"logMissing": false`。
+- 只有 `build.ps1` 在构建时会访问 Maven Central 下载 Montoya API；插件运行时不发起网络请求。
+- 关闭 Burp 后删除 `~/.burp-i18n/` 即可清除本地数据。
+
+## 已知边界
+
+| 不翻译 | 原因 |
+|---|---|
+| 启动向导 | 出现在扩展加载之前 |
 | 可编辑输入框 / 文本域 | 里面是用户数据：报文、搜索词、配置值 |
-| 下拉框选项、表格里的 URL / 主机名 / 状态码 | 这些值常被程序按字符串比较；表格只在绘制层翻译，不改数据 |
-| 渲染视图里的真实网页 | 那是用户请求回来的页面，按 base URL 跳过 |
-| 帮助文档 | 独立的 HTML 资源包，扩展机制覆盖不到 |
-| 插图 PNG / 代码截图里的文字 | 图片像素，不是文本组件 |
-| 纯自绘且坐标固定的文字 | 内容能换，坐标改不了 |
+| 下拉框选项、表格里的 URL / 主机名 / 状态码 | 常被程序按字符串比较；表格只在绘制层翻译 |
+| 渲染视图里的真实网页 | 用户请求回来的页面，按 base URL 跳过 |
+| 帮助文档、图片和截图里的文字 | 不是普通文本组件 |
 
-其他行为：
+其他：
 
-- 表格单元格只在绘制时翻译，不写 `TableModel`。
-- 可编辑框、下拉框选项、表格数据模型默认不碰。
-- 自绘组件只对 `burp.*` 做实验性反射，Burp 升级后可能失效。
-- 中文显示成方块时，把 `config.applyFont` 改成 `true`，插件会优先选微软雅黑/苹方/思源黑体，并保留原字号。
+- 表格只在绘制层翻译，不修改 `TableModel` 或请求/响应数据。
+- 自绘组件 `burp.*` 的反射是实验性的，Burp 升级后可能失效。
+- 中文显示成方块时，把 `config.applyFont` 改成 `true`。
+- 翻译范围是界面文本；不会修改 Burp 的请求、响应和扫描结果。
 
----
-
-## 六、项目结构
+## 项目结构
 
 ```text
 src/main/java/cn/burp/i18n/     扩展源码
 src/main/resources/dict.json    内置词库
-dist/                           构建产物（仓库内保留副本）
-build.ps1                       本地构建脚本（维护者用）
+dist/                           构建产物
+build.ps1                       本地构建脚本
 ```
 
-这是个人项目，随缘维护，不承诺适配所有 Burp 版本，也不提供官方支持。
+个人项目，随缘维护，不承诺适配所有 Burp 版本。
