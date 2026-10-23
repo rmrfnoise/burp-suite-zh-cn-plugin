@@ -3,7 +3,7 @@
 一个 **Montoya API 扩展**，把 Burp Suite 界面上的英文替换成中文。
 
 - 当前版本：`1.8.0`
-- 直接下载：[dist/burp-suite-zh-cn-plugin-1.8.0.jar](dist/burp-suite-zh-cn-plugin-1.8.0.jar)
+- 直接下载：[Releases](https://github.com/rmrfnoise/burp-suite-zh-cn-plugin/releases/latest)
 - 编译目标：Java 17，基于 Montoya API 2024.7
 - 内置词库：2400 条词条 + 45 条正则规则，运行时编辑并热重载
 - 许可证：[MIT](LICENSE)
@@ -15,7 +15,7 @@
 
 ## 一、直接使用
 
-1. 下载 `dist/burp-suite-zh-cn-plugin-1.8.0.jar`。
+1. 从 [Releases](https://github.com/rmrfnoise/burp-suite-zh-cn-plugin/releases/latest) 下载最新 jar。
 2. Burp → **Extensions** → **Installed** → **Add**。
 3. `Extension type` 选 **Java**，`Extension file` 选这个 jar，点 **Next**。
 4. 在 **Output** 里应看到：
@@ -156,7 +156,7 @@ C:\Users\<用户名>\.burp-i18n\dict.json
 ```text
 src/main/java/cn/burp/i18n/     扩展源码
 src/main/resources/dict.json    内置词库
-dist/                           可直接下载的 jar
+dist/                           构建产物（仓库内保留副本）
 build.ps1                       本地构建脚本（维护者用）
 ```
 
