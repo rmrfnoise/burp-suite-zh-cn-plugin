@@ -34,7 +34,30 @@
 
 ---
 
-## 二、词库
+## 二、自己构建（可选）
+
+只有改 Java 代码或内置词库时才需要；普通用户直接用上面的 jar。
+
+需要 JDK 17+（JDK 21 也可以），在项目根目录运行：
+
+```powershell
+.\build.ps1
+```
+
+发新版本时指定版本号：
+
+```powershell
+.\build.ps1 -Version 1.8.1
+```
+
+`-Clean` 会先清空 `build/`。首次构建会自动下载并校验 Montoya API，产物输出到 `dist/`。
+如果 jar 被 Burp 占用，先在 Burp 里 Remove 扩展或关闭 Burp。
+
+Linux/macOS 需要 PowerShell 7（`pwsh`）运行同一个脚本。
+
+---
+
+## 三、词库
 
 首次加载时，jar 内置的 `dict.json` 会复制到：
 
@@ -97,7 +120,7 @@ C:\Users\<用户名>\.burp-i18n\dict.json
 
 ---
 
-## 三、隐私与数据
+## 四、隐私与数据
 
 - 插件**不联网、无遥测、不上报**。
 - 本地数据都在 `~/.burp-i18n/`：词库、`missing.txt`、升级备份。
@@ -107,7 +130,7 @@ C:\Users\<用户名>\.burp-i18n\dict.json
 
 ---
 
-## 四、已知边界
+## 五、已知边界
 
 | 不翻译的东西 | 原因 |
 |---|---|
@@ -128,12 +151,13 @@ C:\Users\<用户名>\.burp-i18n\dict.json
 
 ---
 
-## 五、项目结构
+## 六、项目结构
 
 ```text
 src/main/java/cn/burp/i18n/     扩展源码
 src/main/resources/dict.json    内置词库
 dist/                           可直接下载的 jar
+build.ps1                       本地构建脚本（维护者用）
 ```
 
 这是个人项目，随缘维护，不承诺适配所有 Burp 版本，也不提供官方支持。
