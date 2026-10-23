@@ -1,0 +1,20 @@
+# 编译中间产物
+build/
+
+# 依赖（build.sh 会自动下载 Montoya API）
+lib/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.class
+
+# 运行期数据（词库、漏译日志由插件写到用户目录，不进仓库）
+*.log
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# dist/ 里的 jar 随仓库发布，供直接下载使用，不要忽略
